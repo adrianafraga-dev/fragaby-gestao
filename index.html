@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drinks.By Gestão Inteligente - Unidade Mairinque</title>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- CABEÇALHO PRINCIPAL DA APLICAÇÃO -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-area">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 22h8"/>
+            <path d="M12 11v11"/>
+            <path d="m19 3-7 8-7-8Z"/>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <h1>Drinks.By <span class="brand-badge">Gestão Inteligente</span></h1>
+          <p class="unit-subtitle">
+            <span class="pulse-dot"></span> Unidade Mairinque &bull; Fraga Tech Solutions
+          </p>
+        </div>
+      </div>
+
+      <!-- RESUMO RÁPIDO DO ESTOQUE E ALERTAS -->
+      <div class="header-summary">
+        <div class="summary-card text-emerald">
+          <span class="summary-label">Valor em Estoque</span>
+          <strong class="summary-value" id="hdr-total-stock-value">R$ 0,00</strong>
+        </div>
+
+        <div class="summary-card text-amber" id="hdr-warning-box">
+          <span class="summary-label">Atenção (<= 15d)</span>
+          <strong class="summary-value" id="hdr-warning-count">0 itens</strong>
+        </div>
+
+        <div class="summary-card text-danger" id="hdr-critical-box">
+          <span class="summary-label">Crítico (<= 7d)</span>
+          <strong class="summary-value" id="hdr-critical-count">0 itens</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- BARRA DE NAVEGAÇÃO POR ABAS -->
+  <nav class="app-nav">
+    <div class="nav-container">
+      <button class="nav-tab active" data-tab="tab-estoque">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        <span>Estoque & Leitura OCR</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-lotes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+        <span>Lotes & Validades</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-dashboard">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+        <span>Dashboard de Vendas</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-precificacao">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>Calculadora de Precificação</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL (PAINÉIS DE CADA ABA) -->
+  <main class="app-main">
+
+    <!-- ABA 1: ESTOQUE E LEITURA OCR -->
+    <section id="tab-estoque" class="tab-panel active">
+      <div class="panel-header">
+        <div>
+          <h2>Módulo de Estoque e Entrada Automática por OCR</h2>
+          <p class="panel-desc">Gerencie o nível de bebidas e efetue leitura de Notas Fiscais para entrada sem digitação manual.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-open-add-product">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          + Cadastrar Produto
+        </button>
+      </div>
+
+      <!-- ZONA DE SIMULAÇÃO DE OCR DE NOTA FISCAL -->
+      <div class="ocr-zone-card">
+        <div class="ocr-icon-wrapper">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+        </div>
+        <div class="ocr-info">
+          <h3>Leitura Inteligente OCR de Nota Fiscal (NF-e)</h3>
+          <p>Tire foto ou envie o arquivo da nota fiscal do fornecedor para lançar a quantidade e os custos de aquisição automaticamente no estoque da unidade Mairinque.</p>
+        </div>
+        <div class="ocr-actions">
+          <input type="file" id="ocr-file-input" accept="image/*,.pdf" style="display: none;">
+          <button class="btn btn-emerald btn-lg" id="btn-trigger-ocr">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Simular Leitura OCR de Nota Fiscal
+          </button>
+        </div>
+      </div>
+
+      <!-- STATUS DA LEITURA OCR -->
+      <div id="ocr-status-box" class="ocr-status-card" style="display: none;">
+        <div class="spinner" id="ocr-spinner"></div>
+        <div id="ocr-status-text">Processando imagem da nota fiscal... extraindo itens e custos.</div>
+      </div>
+
+      <!-- TABELA DE ESTOQUE ATUAL -->
+      <div class="card table-card">
+        <div class="card-header-bar">
+          <h3>Estoque Atual & Sugestões de Compra</h3>
+          <div class="search-box">
+            <input type="text" id="search-stock" placeholder="Buscar por produto...">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="table-stock">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Qtd Atual</th>
+                <th>Mínimo Mairinque</th>
+                <th>Custo Aquisição</th>
+                <th>Status Estoque</th>
+                <th>Sugestão Compra FDS</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-stock">
+              <!-- Preenchido via script.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 2: GESTÃO DE LOTES E VALIDADES -->
+    <section id="tab-lotes" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Módulo de Lotes, Alertas de Validade & Queima de Estoque</h2>
+          <p class="panel-desc">Monitoramento preventivo contra perdas por vencimento nas prateleiras da Drinks.By.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-open-add-lot">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          + Registrar Novo Lote
+        </button>
+      </div>
+
+      <!-- PAINEL DE ALERTAS RÁPIDOS DE VALIDADE -->
+      <div class="grid-cards-3">
+        <div class="stat-box box-emerald">
+          <span class="stat-title">Lotes em Situação Normal</span>
+          <strong class="stat-num" id="stat-lots-normal">0</strong>
+          <span class="stat-sub">Vencimento > 15 dias</span>
+        </div>
+        <div class="stat-box box-amber">
+          <span class="stat-title">Alerta de Atenção</span>
+          <strong class="stat-num" id="stat-lots-warning">0</strong>
+          <span class="stat-sub">Vencimento em <= 15 dias</span>
+        </div>
+        <div class="stat-box box-danger">
+          <span class="stat-title">Alerta Crítico de Vencimento</span>
+          <strong class="stat-num" id="stat-lots-critical">0</strong>
+          <span class="stat-sub">Vencimento em <= 7 dias (Queima recomendada)</span>
+        </div>
+      </div>
+
+      <!-- TABELA DE LOTES E VALIDADES -->
+      <div class="card table-card">
+        <div class="card-header-bar">
+          <h3>Monitoramento de Lotes e Controle de Prazos</h3>
+          <div class="filter-group">
+            <label for="filter-lot-status">Filtrar por Status:</label>
+            <select id="filter-lot-status">
+              <option value="todos">Todos os Lotes</option>
+              <option value="critico">Apenas Críticos (<= 7d)</option>
+              <option value="atencao">Apenas Atenção (<= 15d)</option>
+              <option value="normal">Apenas Normais (> 15d)</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="table-lots">
+            <thead>
+              <tr>
+                <th>Lote #</th>
+                <th>Produto</th>
+                <th>Qtd Lote</th>
+                <th>Data de Validade</th>
+                <th>Dias p/ Vencer</th>
+                <th>Status do Alerta</th>
+                <th>Desconto Sugerido</th>
+                <th>Ação Recomendada</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-lots">
+              <!-- Preenchido via script.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 3: DASHBOARD DE VENDAS E CONSUMO MAIRINQUE -->
+    <section id="tab-dashboard" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Módulo de Análise de Vendas & Comportamento Local</h2>
+          <p class="panel-desc">Inteligência de mercado ajustada para o perfil de consumo e eventos de Mairinque.</p>
+        </div>
+        <div class="day-selector-wrapper">
+          <label for="select-day-week">Simular Dia da Semana:</label>
+          <select id="select-day-week" class="select-highlight">
+            <option value="Segunda">Segunda-feira</option>
+            <option value="Terça">Terça-feira</option>
+            <option value="Quarta">Quarta-feira</option>
+            <option value="Quinta" selected>Quinta-feira (Planejamento FDS)</option>
+            <option value="Sexta">Sexta-feira (Pico Noturno)</option>
+            <option value="Sábado">Sábado (Pico Máximo)</option>
+            <option value="Domingo">Domingo (Consumo Fim de Tarde)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ALERTA DINÂMICO DE FIM DE SEMANA -->
+      <div id="weekend-alert-banner" class="banner-weekend-active">
+        <div class="banner-icon">🚀</div>
+        <div class="banner-info">
+          <h3 id="weekend-banner-title">Planejamento Preventivo de Fim de Semana em Mairinque</h3>
+          <p id="weekend-banner-desc">Quinta-feira é o dia ideal para conferir o estoque e ajustar os pedidos para o pico de vendas de Sexta a Domingo!</p>
+        </div>
+      </div>
+
+      <!-- CARDS DE INSIGHTS E PREVISÃO DE DEMANDA -->
+      <div class="grid-cards-3">
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span>Previsão de Demanda FDS</span>
+            <span class="badge badge-emerald" id="badge-demand-pct">+65%</span>
+          </div>
+          <h3 class="metric-value" id="demand-forecast-value">Alta Projeção de Giro</h3>
+          <p class="metric-desc" id="demand-forecast-desc">Pico estimado entre 21:00 e 02:00 na região central de Mairinque.</p>
+        </div>
+
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span>Combo Destaque Mairinque</span>
+            <span class="badge badge-amber">Mais Vendido</span>
+          </div>
+          <h3 class="metric-value" id="top-combo-name">Combo Gin & Tropical</h3>
+          <p class="metric-desc" id="top-combo-desc">Gin Tanqueray + 4 Energéticos Red Bull + Gelo de Coco.</p>
+        </div>
+
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span>Horário de Pico Estimado</span>
+            <span class="badge badge-purple">Pico Noturno</span>
+          </div>
+          <h3 class="metric-value" id="peak-hours-value">21h00 - 02h00</h3>
+          <p class="metric-desc" id="peak-hours-desc">Aumento concentrado de compras de última hora em bebidas geladas.</p>
+        </div>
+      </div>
+
+      <!-- TABELA E RANKING DE COMBOS MAIS PROCURADOS -->
+      <div class="grid-2-cols">
+        <div class="card">
+          <h3>Ranking de Combos e Bebidas em Mairinque</h3>
+          <ul class="combo-list" id="combo-ranking-list">
+            <!-- Preenchido via script.js -->
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Recomendação Automática de Compras Preventivas</h3>
+          <div class="recommendations-box" id="recommendations-container">
+            <!-- Preenchido via script.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 4: CALCULADORA DE PRECIFICAÇÃO DINÂMICA -->
+    <section id="tab-precificacao" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Módulo de Precificação Dinâmica & Rentabilidade Real</h2>
+          <p class="panel-desc">Calcule a margem de lucro líquida exata descontando impostos, custos operacionais e taxa de cartão.</p>
+        </div>
+      </div>
+
+      <div class="grid-2-cols">
+        <!-- FORMULÁRIO DE SIMULAÇÃO DE CUSTOS E MARGEM -->
+        <div class="card">
+          <h3>Calculadora Inteligente de Margem</h3>
+          <form id="pricing-form" class="form-grid">
+            <div class="form-group full-width">
+              <label for="calc-product-select">Selecione ou Digite o Produto:</label>
+              <select id="calc-product-select">
+                <option value="">-- Selecionar do Estoque --</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="calc-cost-unit">Custo de Aquisição (R$):</label>
+              <input type="number" id="calc-cost-unit" step="0.01" value="45.00" placeholder="0.00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="calc-tax-rate">Alíquota de Imposto (%):</label>
+              <input type="number" id="calc-tax-rate" step="0.1" value="12.0" placeholder="12.0" required>
+            </div>
+
+            <div class="form-group">
+              <label for="calc-fixed-cost">Custo Operacional Fixo (%):</label>
+              <input type="number" id="calc-fixed-cost" step="0.1" value="15.0" placeholder="15.0" required>
+            </div>
+
+            <div class="form-group">
+              <label for="calc-target-margin">Margem Desejada (%):</label>
+              <input type="number" id="calc-target-margin" step="0.1" value="30.0" placeholder="30.0" required>
+            </div>
+
+            <div class="form-group">
+              <label for="calc-competitor-price">Preço Concorrência Mairinque (R$):</label>
+              <input type="number" id="calc-competitor-price" step="0.01" value="89.90" placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+              <label for="calc-practiced-price">Preço de Venda a Simular (R$):</label>
+              <input type="number" id="calc-practiced-price" step="0.01" value="70.00" placeholder="0.00" required>
+            </div>
+          </form>
+        </div>
+
+        <!-- RESUMO DA RENTABILIDADE E ALERTAS -->
+        <div class="card pricing-results-card">
+          <h3>Análise de Rentabilidade e Preço Sugerido</h3>
+
+          <!-- ALERTA SE MARGEM INVIÁVEL -->
+          <div id="pricing-alert-box" class="pricing-alert-danger" style="display: none;">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-content">
+              <strong>Margem de lucro inviável!</strong>
+              <p id="pricing-alert-text">A margem real calculada (14.2%) é inferior à margem desejada configurada (30.0%).</p>
+            </div>
+          </div>
+
+          <div class="pricing-metrics-grid">
+            <div class="pricing-metric-item">
+              <span class="p-label">Custo Efetivo c/ Impostos + Operacional</span>
+              <strong class="p-value text-muted" id="res-total-cost">R$ 57,15</strong>
+            </div>
+
+            <div class="pricing-metric-item">
+              <span class="p-label">Preço Sugerido (Para Meta de Margem)</span>
+              <strong class="p-value text-emerald" id="res-suggested-price">R$ 104,65</strong>
+            </div>
+
+            <div class="pricing-metric-item">
+              <span class="p-label">Margem Real no Preço Simulado</span>
+              <strong class="p-value" id="res-real-margin">14.2%</strong>
+            </div>
+
+            <div class="pricing-metric-item">
+              <span class="p-label">Lucro Líquido Real por Unidade</span>
+              <strong class="p-value" id="res-real-profit">R$ 9,95</strong>
+            </div>
+          </div>
+
+          <div class="competitor-comparison">
+            <span>Diferença em relação à Concorrência Mairinque:</span>
+            <strong id="res-competitor-diff" class="text-amber">R$ -19,90 (Abaixo)</strong>
+          </div>
+
+          <button class="btn btn-emerald btn-block btn-lg mt-4" id="btn-apply-suggested-price">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Ajustar Automaticamente para Preço Sugerido Ideal
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: CADASTRAR PRODUTO NO ESTOQUE -->
+  <div class="modal-backdrop" id="modal-product" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Cadastrar Novo Produto</h3>
+        <button class="btn-close-modal" id="btn-close-modal-product">&times;</button>
+      </div>
+      <form id="form-add-product" class="modal-body">
+        <div class="form-group">
+          <label for="prod-name">Nome do Produto:</label>
+          <input type="text" id="prod-name" placeholder="Ex: Gin Tanqueray 750ml" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prod-qty">Quantidade Atual:</label>
+            <input type="number" id="prod-qty" min="0" placeholder="10" required>
+          </div>
+          <div class="form-group">
+            <label for="prod-min">Nível Mínimo (Mairinque):</label>
+            <input type="number" id="prod-min" min="1" placeholder="15" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="prod-cost">Custo de Aquisição (R$):</label>
+          <input type="number" id="prod-cost" step="0.01" placeholder="45.00" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-product">Cancelar</button>
+          <button type="submit" class="btn btn-emerald">Salvar Produto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CADASTRAR NOVO LOTE -->
+  <div class="modal-backdrop" id="modal-lot" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Registrar Novo Lote de Produto</h3>
+        <button class="btn-close-modal" id="btn-close-modal-lot">&times;</button>
+      </div>
+      <form id="form-add-lot" class="modal-body">
+        <div class="form-group">
+          <label for="lot-product-select">Selecione o Produto:</label>
+          <select id="lot-product-select" required>
+            <!-- Preenchido via JS -->
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="lot-number">Número do Lote:</label>
+            <input type="text" id="lot-number" placeholder="Ex: LOTE-2026-X9" required>
+          </div>
+          <div class="form-group">
+            <label for="lot-qty">Quantidade no Lote:</label>
+            <input type="number" id="lot-qty" min="1" placeholder="24" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="lot-expiry-date">Data de Validade:</label>
+          <input type="date" id="lot-expiry-date" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-lot">Cancelar</button>
+          <button type="submit" class="btn btn-emerald">Registrar Lote</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION DE ALERTA -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- SCRIPT DE LÓGICA E REGRAS DE NEGÓCIO -->
+  <script src="script.js"></script>
+</body>
+</html>
