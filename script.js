@@ -1,3 +1,21 @@
+// Conexão com o Supabase
+const SUPABASE_URL = 'https://oyjqbucxweiqcvjodcmu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_REksvaGofFHV8NbBrgGmIA_ycxB8r7I';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Buscar dados do banco
+async function carregarProdutosDoBanco() {
+  const { data, error } = await supabase.from('produtos').select('*');
+  if (error) {
+    console.error('Erro ao buscar produtos:', error);
+    return;
+  }
+  if (data && data.length > 0) {
+    produtosEstoque = data;
+    atualizarTabelaEstoque();
+    atualizarResumosCabecalho();
+  }
+}
 /**
  * ==========================================================================
  * DRINKS.BY GESTÃO INTELIGENTE - LÓGICA DA APLICAÇÃO (script.js)
@@ -630,4 +648,32 @@ function exibirToast(mensagem, tipo = "emerald") {
   setTimeout(() => {
     if (toast.parentElement) toast.remove();
   }, 4000);
+}
+// Exportar para Excel
+function exportarEstoqueExcel() {
+  const dados = produtosEstoque.map(p => ({
+    "Produto": p.nome,
+    "Quantidade": p.quantidade_atual,
+    "Mínimo": p.nivel_minimo,
+    "Custo (R$)": p.custo_aquisicao
+  }));
+  const ws = XLSX.utils.json_to_sheet(dados);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Estoque");
+  XLSX.writeFile(wb, `Estoque_FragaBy_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+// Exportar para PDF
+function exportarEstoquePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.text("FragaBy Gestão - Relatório de Estoque", 14, 20);
+  
+  const linhas = produtosEstoque.map(p => [p.nome, p.quantidade_atual, p.nivel_minimo, `R$ ${p.custo_aquisicao}`]);
+  doc.autoTable({
+    startY: 30,
+    head: [["Produto", "Qtd", "Mínimo", "Custo"]],
+    body: linhas
+  });
+  doc.save(`Estoque_FragaBy_${new Date().toISOString().slice(0,10)}.pdf`);
 }
